@@ -98,7 +98,7 @@ include 'service/config.php';
             <!-- Sidebar -->
             <div class="col-md-2 sidebar">
 
-                <h3 class="text-warning mb-4">Admin Panel</h3>
+                <h3 class="light mb-4 fw-bold">Admin Panel</h3>
                 <a href="menu-admin.php"><i class="bi bi-palette"></i>Kelola Menu </a>
                 <a href="user-admin.php"><i class="bi bi-person"></i> Kelola User</a>
                 <a href="../login.php"><i class="bi bi-box-arrow-right"></i> Keluar</a>
@@ -108,7 +108,7 @@ include 'service/config.php';
             <!-- Main Content -->
             <div class="col-md-10 content">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="text-warning fw-bold">Manajemen Data Siswa</h2>
+                    <h2 class="text-light fw-bold">Manajemen Data Siswa</h2>
                     <div class="d-flex gap-3">
                         <!-- tombol untuk searching -->
                         <!-- <form action="" method="GET">
@@ -123,7 +123,7 @@ include 'service/config.php';
 
                 <!-- menu Table -->
                 <div class="card">
-                    <div class="card-header bg-warning text-light fw-bold">
+                    <div class="card-header bg-secondary text-light fw-bold">
                         <i class="bi bi-table me-2"></i> Daftar siswa
                     </div>
                     <div class="card-body">
@@ -153,18 +153,18 @@ include 'service/config.php';
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                             </div>
                             <div class="modal-body">
-                                <form method="POST" enctype="multipart/form-data">
+                                <form method="POST" enctype="multipart/form-data" id="formTambah">
                                     <div class="mb-3">
-                                        <label class="form-label">Nama Makanan</label>
-                                        <input type="text" name="nama_makanan" class="form-control">
+                                        <label class="form-label">Nama</label>
+                                        <input type="text" name="nama" class="form-control">
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Harga Makanan</label>
-                                        <input type="int" name="harga_makanan" class="form-control">
+                                        <label class="form-label">Kelas</label>
+                                        <input type="textt" name="kelas" class="form-control">
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Gambar Makanan</label>
-                                        <input type="file" name="gambar" class="form-control">
+                                        <label class="form-label">Nisn</label>
+                                        <input type="text" name="nisn" class="form-control">
                                     </div>
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                                     <button type="submit" class="btn btn-warning text-light fw-bold">Simpan</button>
@@ -179,9 +179,8 @@ include 'service/config.php';
     </div>
     <!-- main js -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
 <script>
-$(document).ready(function(){
+    $(document).ready(function(){
     $.ajax({
         type: "GET",
         url: "GetSiswa.php",
@@ -202,11 +201,42 @@ $(document).ready(function(){
             console.error("Error:", error);
         }
     });
+
+    $("#formTambah").submit(function(e){
+        e.preventDefault(); // Mencegah reload halaman
+
+        let nama = $("[name='nama']").val();
+        let kelas = $("[name='kelas']").val();
+        let nisn = $("[name='nisn']").val();
+
+        $.ajax({
+            type: "POST",
+            url: "tambahSiswa.php",
+            data: { nama: nama, kelas: kelas, nisn: nisn },
+            dataType: "json",
+            success: function(response){
+                if(response.status === "success"){
+                    let newRow = `<tr>
+                        <td>${response.id}</td>
+                        <td>${nama}</td>
+                        <td>${kelas}</td>
+                        <td>${nisn}</td>
+                    </tr>`;
+
+                    $("#dataSiswa").append(newRow);
+                    $("#formTambah")[0].reset(); // Reset form
+                    alert("Data berhasil ditambahkan! cuy");
+                } else {
+                    alert("Gagal menambahkan data!");
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error:", error);
+            }
+        });
+    });
 });
-
 </script>
-
-
     <!-- main js -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
